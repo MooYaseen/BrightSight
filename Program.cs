@@ -10,39 +10,33 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// builder.WebHost.UseUrls("http://0.0.0.0:5248");
-
-
-// Add services to the container.
-// هنا سنضيف تهيئة الـ controllers وندمج الفلتر
-builder.Services.AddControllers(options =>
+// **أولاً: إضافة سياسة CORS قبل Build**
+builder.Services.AddCors(options =>
 {
-    // هذا هو السطر الذي سيضيف الـ LogUserActivity كفلتر عام
-    options.Filters.Add<LogUserActivity>();
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
 
-
-// builder.Services.AddControllers()
-//     .AddJsonOptions(options =>
-//     {
-//         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-//     });
-
-
-
+// Add services to the container.
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<LogUserActivity>();
+});
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
-// هنا يتم تسجيل الـ Action Filter كخدمة
+// تسجيل الـ Action Filter كخدمة
 builder.Services.AddScoped<LogUserActivity>();
 
-
-// ✅ إعدادات TomTom
+// إعدادات TomTom
 builder.Services.Configure<TomTomSettings>(
-builder.Configuration.GetSection("TomTomSettings"));
-
+    builder.Configuration.GetSection("TomTomSettings"));
 
 builder.Services.AddScoped<TomTomService>();
 
@@ -56,7 +50,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ✅ SEED ROLES & USERS هنا
+// SEED ROLES & USERS
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
@@ -66,10 +60,8 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
-    // Apply any pending migrations (optional but recommended)
     await context.Database.MigrateAsync();
 
-    // Call seeding method
     await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
@@ -77,9 +69,9 @@ catch (Exception ex)
     var logger = services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "An error occurred during seeding");
 }
-// ✅ انتهى الجزء الخاص بالـ Seeding
 
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -91,17 +83,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseCors(builder => builder
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-    .WithOrigins("http://localhost:3000"));
+// **UseCors يجب أن تأتي هنا، قبل Authentication و Authorization**
+app.UseCors("AllowLocalhost3000");
 
-app.UseStaticFiles(); // ✅ إضافة هذا السطر
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
