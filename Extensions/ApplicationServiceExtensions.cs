@@ -4,6 +4,8 @@ using Graduation.Interfaces;
 using Graduation.Services;
 using Graduation.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
+
 
 namespace Graduation.Extensions
 {
@@ -13,7 +15,7 @@ namespace Graduation.Extensions
         {
             services.AddDbContext<DataContext>(options =>
                 // options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(config.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
