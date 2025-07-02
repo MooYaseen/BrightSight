@@ -13,7 +13,7 @@ namespace Graduation.Extensions
         {
             services.AddDbContext<DataContext>(options =>
                 // options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
