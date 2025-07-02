@@ -12,7 +12,8 @@ namespace Graduation.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+                // options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();

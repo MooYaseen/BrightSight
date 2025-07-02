@@ -78,3 +78,4 @@ F:\Projects\BrightSight\New backend\Backend (ASP.Net)\Graduation\obj\Release\net
 F:\Projects\BrightSight\New backend\Backend (ASP.Net)\Graduation\obj\Release\net6.0\Graduation.pdb
 F:\Projects\BrightSight\New backend\Backend (ASP.Net)\Graduation\obj\Release\net6.0\Graduation.genruntimeconfig.cache
 F:\Projects\BrightSight\New backend\Backend (ASP.Net)\Graduation\obj\Release\net6.0\ref\Graduation.dll
+F:\Projects\BrightSight\New backend\Backend (ASP.Net)\Graduation\obj\Release\net6.0\Graduation.sourcelink.json
